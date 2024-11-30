@@ -10,11 +10,20 @@ export class MessageService {
   ) {}
 
   async findAll(): Promise<Message[]> {
-    return this.messageRepository.find();
+    return this.messageRepository.find({where: {deleted: false}});
   }
 
   async create(messageData: {message: string, sender: number}): Promise<Message> {
     const newMessage = this.messageRepository.create({ message: messageData.message, user: { id: messageData.sender } });
     return await this.messageRepository.save(newMessage);
+  }
+
+  async update(messageData: {newMessage: string, messageId: number}){
+    await this.messageRepository.update(messageData.messageId, {message: messageData.newMessage, modifiedAt: new Date()})
+  }
+
+  // delete message
+  async delete(messageId: number){
+    await this.messageRepository.update(messageId, {deleted: true});
   }
 }
