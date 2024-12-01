@@ -13,10 +13,33 @@ function Register() {
 
     const handleSubmit = (event: FormEvent): void => {
         event.preventDefault();
-        console.log(user);
-        setOpen(false);
-        //create new user;;;
+
+        fetch('http://localhost:3000/user', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                },
+            body: JSON.stringify({username: user}),
+        })
+        .then((response) => {
+            if (!response.ok){
+                throw new Error('HTTP error! Status: ' + response.status);
+
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log(data);
+            localStorage.setItem('currentUser', JSON.stringify(data));
+            alert('Bienvenue, ' + data.username)
+            setOpen(false);
+        })
+        .catch((error) => {
+            console.error('Error while fetching data: ', error);
+            alert('Error while creating user');
+        })
     }
+
     const style = {
         position: 'absolute',
         top: '50%',
@@ -45,7 +68,8 @@ function Register() {
                     </Typography>
                     <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                         <form onSubmit={handleSubmit}>
-                            <TextField value={user} onChange={(event: ChangeEvent<HTMLInputElement>): void => {setUser(event.target.value)}}
+                            <TextField value={user} 
+                                onChange={(event: ChangeEvent<HTMLInputElement>): void => {setUser(event.target.value)}}
                                 label="Pseudo" variant="outlined" sx={{width: '80%'}} />
                             <Button type="submit" variant='contained' sx={{width: '80%', mt: 2}}>submit</Button>
                         </form>

@@ -11,6 +11,7 @@ function Chat() {
     const [messages, setMessages] = useState<Array<string>>([]);
     const [newMessage, setNewMessage] = useState<string>('');
     const getMessages = () => setMessages(['message1', 'message2']);
+    console.log(localStorage.getItem('currentUser'))
     // tomodify ?
     const style = {
         display: 'flex',
@@ -35,23 +36,24 @@ function Chat() {
     const sendMessage = (event: FormEvent): void => {
         event.preventDefault();
         console.log(newMessage);
+        // console.log(localStorage.getItem('currentUser'))
     }
     useEffect(() => {
         getMessages();
     }, []);
-    
+
     return (
         <div>
             <Stack spacing={2} sx={style}>
-                {messages.map((message) => (
-                    <Item sx={itemStyle}>{message}</Item>
+                {messages.map((message, id) => (
+                    <Item key={id} sx={itemStyle}>{message}</Item>
                 ))}
             </Stack>
-            <FormControl onSubmit={sendMessage} sx={formStyle}>
+            <FormControl sx={formStyle}>
                 <TextField value={newMessage} onChange={(event: ChangeEvent<HTMLInputElement>): void => {
                     setNewMessage(event.target.value)}}
                     label="Nouveau message" variant="outlined" />
-                <Button type="submit" variant='contained'>Envoyer</Button>
+                <Button onClick={sendMessage} type="submit" variant='contained'>Envoyer</Button>
             </FormControl>
         </div>
     )
