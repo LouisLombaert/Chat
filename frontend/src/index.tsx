@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import Register from './component/Register/Register';
 import reportWebVitals from './reportWebVitals';
+import Chat from './component/Chat/Chat';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -12,6 +13,7 @@ root.render(
   <React.StrictMode>
     {/* <App /> */}
     <Register />
+    <Chat />
   </React.StrictMode>
 );
 
