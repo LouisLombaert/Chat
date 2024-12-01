@@ -10,7 +10,6 @@ function Chat() {
     const [pending, setPending] = useState<boolean>(false);
     const [messages, setMessages] = useState<Array<string>>([]);
     const [newMessage, setNewMessage] = useState<string>('');
-    const getMessages = () => setMessages(['message1', 'message2']);
     console.log(localStorage.getItem('currentUser'))
     // tomodify ?
     const style = {
@@ -33,14 +32,67 @@ function Chat() {
         flexDirection: 'row'
     }
 
+    useEffect(() => {
+        fetch('http://localhost:3000/message', {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('HTTP error! Status: ' + response.status);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log(data);
+            //toModify, state messages should be an array of Message object => Define a message type
+            let messagesList: Array<string> = [];
+            for (let message of data){
+                messagesList.push(message.message);
+            }
+            setMessages(messagesList);
+        })
+        .catch((error) => {
+            console.error('error while fetching data: ' + error);
+            alert('Error while fetching data');
+        })
+    }, []);
+
     const sendMessage = (event: FormEvent): void => {
         event.preventDefault();
         console.log(newMessage);
         // console.log(localStorage.getItem('currentUser'))
+        let user: string|null = localStorage.getItem('currentUser');
+        if (user) {
+            let sender = JSON.parse(user);
+            console.log(sender);
+            fetch('http://localhost:3000/message', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({message: newMessage, sender: sender?.id})
+            })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('HTTP error! Status: ' + response.status);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log(data);
+                setMessages([...messages, data.message]);
+                setNewMessage('');
+            })
+            .catch((error) => {
+                console.error('Error while fetching data: ', error);
+                alert('Error while sending message');
+            })
+        }
     }
-    useEffect(() => {
-        getMessages();
-    }, []);
+    
 
     return (
         <div>
