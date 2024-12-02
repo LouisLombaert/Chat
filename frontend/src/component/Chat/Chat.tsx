@@ -6,9 +6,18 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { FormControl } from '@mui/material';
 
+export type User = {
+    id: number,
+}
+
+export type Message = {
+    message: string,
+    user: User
+}
+
 function Chat() {
     const [pending, setPending] = useState<boolean>(false);
-    const [messages, setMessages] = useState<Array<string>>([]);
+    const [messages, setMessages] = useState<Array<Message>>([]);
     const [newMessage, setNewMessage] = useState<string>('');
     console.log(localStorage.getItem('currentUser'))
     // tomodify ?
@@ -24,6 +33,13 @@ function Chat() {
         padding: 2,
         borderRadius: 3
     }
+    const currentItemStyle = {
+        border: 1,
+        borderColor: '#030303', // to change
+        bgcolor: '#3935a6',
+        padding: 2,
+        borderRadius: 3
+    }
     const formStyle = {
         position: 'absolute',
         bottom: '5%',
@@ -31,6 +47,8 @@ function Chat() {
         display: 'flex',
         flexDirection: 'row'
     }
+
+    const user: string|null = localStorage.getItem('currentUser');
 
     useEffect(() => {
         fetch('http://localhost:3000/message', {
@@ -49,10 +67,12 @@ function Chat() {
             console.log(data);
             //toModify, state messages should be an array of Message object => Define a message type
             let messagesList: Array<string> = [];
-            for (let message of data){
+            setMessages(data);
+            /*for (let message of data){
+                console.log(message);
                 messagesList.push(message.message);
             }
-            setMessages(messagesList);
+            setMessages(messagesList);*/
         })
         .catch((error) => {
             console.error('error while fetching data: ' + error);
@@ -64,7 +84,7 @@ function Chat() {
         event.preventDefault();
         console.log(newMessage);
         // console.log(localStorage.getItem('currentUser'))
-        let user: string|null = localStorage.getItem('currentUser');
+        //let user: string|null = localStorage.getItem('currentUser');
         if (user) {
             let sender = JSON.parse(user);
             console.log(sender);
@@ -83,7 +103,8 @@ function Chat() {
             })
             .then((data) => {
                 console.log(data);
-                setMessages([...messages, data.message]);
+                let messageObject: Message = {message: data.message, user: data.user.id};
+                setMessages([...messages, messageObject]);
                 setNewMessage('');
             })
             .catch((error) => {
@@ -97,9 +118,18 @@ function Chat() {
     return (
         <div>
             <Stack spacing={2} sx={style}>
-                {messages.map((message, id) => (
-                    <Item key={id} sx={itemStyle}>{message}</Item>
-                ))}
+                {messages.map((message, id) => {
+                    let sender = user ? JSON.parse(user).id : ''
+                    console.log('sender: ' + sender);
+                    console.log('user: ' +  message.user.id);
+                    // console.log(sender.id == message.user.id)
+                    return message.user.id == sender ? 
+                    (
+                        <Item key={id} sx={currentItemStyle}>{message.message}</Item>
+                    ) : (
+                        <Item key={id} sx={itemStyle}>{message.message}</Item>
+                    )
+                })}
             </Stack>
             <FormControl sx={formStyle}>
                 <TextField value={newMessage} onChange={(event: ChangeEvent<HTMLInputElement>): void => {

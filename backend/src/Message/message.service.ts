@@ -10,7 +10,7 @@ export class MessageService {
   ) {}
 
   async findAll(): Promise<Message[]> {
-    return this.messageRepository.find({where: {deleted: false}});
+    return this.messageRepository.find({where: {deleted: false}, relations: {user: true}, select: {message: true, user: {id: true} }});
   }
 
   async create(messageData: {message: string, sender: number}): Promise<Message> {
