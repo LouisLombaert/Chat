@@ -14,6 +14,10 @@ export class UserService {
   }
 
   async create(username: string): Promise<User> {
+    const exists = this.userRepository.findOneBy({username: username});
+    if (exists){
+        return exists;
+    }
     const newUser = this.userRepository.create({username: username});
     return await this.userRepository.save(newUser);
   }
