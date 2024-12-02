@@ -33,6 +33,7 @@ function Register() {
             localStorage.setItem('currentUser', JSON.stringify(data));
             alert('Bienvenue, ' + data.username)
             setOpen(false);
+            // window.location.reload();
         })
         .catch((error) => {
             console.error('Error while fetching data: ', error);

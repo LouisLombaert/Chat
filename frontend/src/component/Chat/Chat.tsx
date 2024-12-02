@@ -4,13 +4,17 @@ import Stack from '@mui/material/Stack';
 import Item from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import { FormControl } from '@mui/material';
+import { FormControl, Fab } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import Modify from './Modify';
+// import Register from '../Register/Register';
 
 export type User = {
     id: number,
 }
 
 export type Message = {
+    id: number,
     message: string,
     user: User
 }
@@ -19,6 +23,10 @@ function Chat() {
     const [pending, setPending] = useState<boolean>(false);
     const [messages, setMessages] = useState<Array<Message>>([]);
     const [newMessage, setNewMessage] = useState<string>('');
+    const [openEdit, setOpenEdit] = useState<boolean>(false);
+    const [toModify, setToModify] = useState<string>('');
+    const [msgId, setMsgId] = useState<number>(0);
+
     console.log(localStorage.getItem('currentUser'))
     // tomodify ?
     const style = {
@@ -66,7 +74,7 @@ function Chat() {
         .then((data) => {
             console.log(data);
             //toModify, state messages should be an array of Message object => Define a message type
-            let messagesList: Array<string> = [];
+            // let messagesList: Array<string> = [];
             setMessages(data);
             /*for (let message of data){
                 console.log(message);
@@ -103,7 +111,7 @@ function Chat() {
             })
             .then((data) => {
                 console.log(data);
-                let messageObject: Message = {message: data.message, user: data.user.id};
+                let messageObject: Message = {id: data.id, message: data.message, user: data.user.id};
                 setMessages([...messages, messageObject]);
                 setNewMessage('');
             })
@@ -113,10 +121,18 @@ function Chat() {
             })
         }
     }
+
+    const editMessage = (id: number, msg: string) => {
+        console.log('ok');
+        setToModify(msg);
+        setMsgId(id);
+        setOpenEdit(true);
+    }
     
 
     return (
         <div>
+            <Modify open={openEdit} message={toModify} messageId={msgId} />
             <Stack spacing={2} sx={style}>
                 {messages.map((message, id) => {
                     let sender = user ? JSON.parse(user).id : ''
@@ -125,7 +141,13 @@ function Chat() {
                     // console.log(sender.id == message.user.id)
                     return message.user.id == sender ? 
                     (
-                        <Item key={id} sx={currentItemStyle}>{message.message}</Item>
+                        <Item key={id} sx={currentItemStyle}>
+                            {message.message}
+                            <Fab size="small" color="primary" aria-label="add" onClick={() => editMessage(message.id, message.message)}>
+                                <EditIcon  />
+                            </Fab>
+                        </Item>
+                        
                     ) : (
                         <Item key={id} sx={itemStyle}>{message.message}</Item>
                     )
