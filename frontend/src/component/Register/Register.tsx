@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import {Typography, FormControl} from '@mui/material';
 
 
 function Register() {
@@ -13,9 +13,11 @@ function Register() {
 
     const handleSubmit = (event: FormEvent): void => {
         event.preventDefault();
-        console.log(user)
+        if (user == '') {
+            return;
+        }
 
-        fetch('http://localhost:3000/user', {
+        fetch(`${process.env.REACT_APP_URL}/user`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -29,11 +31,9 @@ function Register() {
             return response.json();
         })
         .then((data) => {
-            console.log(data);
             localStorage.setItem('currentUser', JSON.stringify(data));
             alert('Bienvenue, ' + data.username)
             setOpen(false);
-            // window.location.reload();
         })
         .catch((error) => {
             console.error('Error while fetching data: ', error);
@@ -55,10 +55,7 @@ function Register() {
     };
 
     return (
-        <div>
-            <head>
-                <meta name="viewport" content="initial-scale=1, width=device-width" />
-            </head>
+        <Box>
             <Modal
                 open={open}
                 aria-labelledby="modal-modal-title"
@@ -71,16 +68,16 @@ function Register() {
                         </Typography>
                     </Box>
                     <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                        <form onSubmit={handleSubmit}>
+                        <FormControl onSubmit={handleSubmit} sx={{width: '100%'}}>
                             <TextField value={user} 
                                 onChange={(event: ChangeEvent<HTMLInputElement>): void => {setUser(event.target.value)}}
                                 label="Pseudo" variant="outlined" sx={{width: '100%'}} />
-                            <Button type="submit" variant='contained' sx={{width: '100%', mt: 2}}>submit</Button>
-                        </form>
+                            <Button  onClick={handleSubmit} type="submit" variant='contained' sx={{width: '100%', mt: 2}}>submit</Button>
+                        </FormControl>
                     </Typography>
                 </Box>
             </Modal>
-        </div>
+        </Box>
     )
 }
 

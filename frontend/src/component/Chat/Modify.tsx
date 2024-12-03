@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {useEffect, useState, ChangeEvent, FormEvent} from 'react';
-import {Modal, TextField, Button, Typography, Box} from '@mui/material';
+import {Modal, TextField, Button, Typography, Box, FormControl} from '@mui/material';
+
 export type Props = {
     open: boolean,
     message: string,
@@ -12,7 +13,6 @@ function Modify(props: Props){
     const [newMessage, setNewMessage] = useState<string>(props.message);
     useEffect(() => {
         if (props.open) {
-            console.log('Modify component opened. Perform setup tasks.');
             setIsOpen(true);
             setNewMessage(props.message);
         }
@@ -32,8 +32,10 @@ function Modify(props: Props){
 
     const handleSubmit = (event: FormEvent) => {
         event.preventDefault();
-        console.log(newMessage);
-        fetch('http://localhost:3000/message', {
+        if (newMessage == '') {
+            return;
+        }
+        fetch(`${process.env.REACT_APP_URL}/message`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -47,7 +49,6 @@ function Modify(props: Props){
             return response;
         })
         .then((data) => {
-            console.log(data);
             setIsOpen(false);
         })
         .catch((error) => {
@@ -68,12 +69,12 @@ function Modify(props: Props){
                         </Typography>
                     </Box>
                     <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                        <form onSubmit={handleSubmit}>
+                        <FormControl sx={{width: '100%'}}>
                             <TextField value={newMessage} 
                                 onChange={(event: ChangeEvent<HTMLInputElement>): void => {setNewMessage(event.target.value)}}
                                 label="Message" variant="outlined" sx={{width: '100%'}} />
-                            <Button type="submit" variant='contained' sx={{width: '100%', mt: 2}}>Modifier</Button>
-                        </form>
+                            <Button onClick={handleSubmit} type="submit" variant='contained' sx={{width: '100%', mt: 2}}>Modifier</Button>
+                        </FormControl>
                     </Typography>
                 </Box>
             </Modal>

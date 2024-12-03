@@ -7,7 +7,6 @@ import TextField from '@mui/material/TextField';
 import { FormControl, Fab, Box } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import Modify from './Modify';
-// import Register from '../Register/Register';
 
 export type User = {
     id: number,
@@ -20,7 +19,6 @@ export type Message = {
 }
 
 function Chat() {
-    const [pending, setPending] = useState<boolean>(false);
     const [messages, setMessages] = useState<Array<Message>>([]);
     const [newMessage, setNewMessage] = useState<string>('');
     const [openEdit, setOpenEdit] = useState<boolean>(false);
@@ -42,7 +40,7 @@ function Chat() {
     }
     const itemStyle = {
         border: 1,
-        borderColor: '#030303', // to change
+        borderColor: '#030303',
         bgcolor: '#36414C',
         color: '#D9D9D9',
         padding: 2,
@@ -52,7 +50,7 @@ function Chat() {
     }
     const currentItemStyle = {
         border: 1,
-        borderColor: '#030303', // to change
+        borderColor: '#030303',
         bgcolor: '#2479CF',
         padding: 2,
         borderRadius: 5,
@@ -72,7 +70,7 @@ function Chat() {
     let user: string|null = localStorage.getItem('currentUser');
 
     useEffect(() => {
-        fetch('http://localhost:3000/message', {
+        fetch(`${process.env.REACT_APP_URL}/message`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -85,7 +83,6 @@ function Chat() {
             return response.json();
         })
         .then((data) => {
-            //console.log(data);
             setMessages(data);
         })
         .catch((error) => {
@@ -96,12 +93,13 @@ function Chat() {
 
     const sendMessage = (event: FormEvent): void => {
         event.preventDefault();
-        console.log(newMessage);
         user = localStorage.getItem('currentUser');
         if (user) {
             let sender = JSON.parse(user);
-            console.log(sender);
-            fetch('http://localhost:3000/message', {
+            if (newMessage == '') {
+                return;
+            }
+            fetch(`${process.env.REACT_APP_URL}/message`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
