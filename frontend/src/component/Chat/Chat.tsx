@@ -4,7 +4,7 @@ import Stack from '@mui/material/Stack';
 import Item from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import { FormControl, Fab } from '@mui/material';
+import { FormControl, Fab, Box } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import Modify from './Modify';
 // import Register from '../Register/Register';
@@ -27,36 +27,49 @@ function Chat() {
     const [toModify, setToModify] = useState<string>('');
     const [msgId, setMsgId] = useState<number>(0);
 
-    console.log(localStorage.getItem('currentUser'))
-    // tomodify ?
+
+    const inputStyle = {
+        width: 300,
+        background: '#C9E2FB',
+        borderRadius: 2
+    }
     const style = {
         display: 'flex',
         justifyContent: 'center',
-        my: 10,
-        mx: 20,
+        my: 12,
+        mx: 37,
+        maxHeight: '70%',
     }
     const itemStyle = {
         border: 1,
         borderColor: '#030303', // to change
+        bgcolor: '#36414C',
+        color: '#D9D9D9',
         padding: 2,
-        borderRadius: 3
+        borderRadius: 5,
+        width: 'fit-content',
+        maxWidth: '45%'
     }
     const currentItemStyle = {
         border: 1,
         borderColor: '#030303', // to change
-        bgcolor: '#3935a6',
+        bgcolor: '#2479CF',
         padding: 2,
-        borderRadius: 3
+        borderRadius: 5,
+        width: 'fit-content',
+        maxWidth: '45%',
+        alignSelf: 'flex-end',
+        color: '#D9D9D9'
     }
     const formStyle = {
         position: 'absolute',
         bottom: '5%',
         right: '10%',
         display: 'flex',
-        flexDirection: 'row'
+        flexDirection: 'row',
     }
 
-    const user: string|null = localStorage.getItem('currentUser');
+    let user: string|null = localStorage.getItem('currentUser');
 
     useEffect(() => {
         fetch('http://localhost:3000/message', {
@@ -72,15 +85,8 @@ function Chat() {
             return response.json();
         })
         .then((data) => {
-            console.log(data);
-            //toModify, state messages should be an array of Message object => Define a message type
-            // let messagesList: Array<string> = [];
+            //console.log(data);
             setMessages(data);
-            /*for (let message of data){
-                console.log(message);
-                messagesList.push(message.message);
-            }
-            setMessages(messagesList);*/
         })
         .catch((error) => {
             console.error('error while fetching data: ' + error);
@@ -91,8 +97,7 @@ function Chat() {
     const sendMessage = (event: FormEvent): void => {
         event.preventDefault();
         console.log(newMessage);
-        // console.log(localStorage.getItem('currentUser'))
-        //let user: string|null = localStorage.getItem('currentUser');
+        user = localStorage.getItem('currentUser');
         if (user) {
             let sender = JSON.parse(user);
             console.log(sender);
@@ -110,8 +115,7 @@ function Chat() {
                 return response.json();
             })
             .then((data) => {
-                console.log(data);
-                let messageObject: Message = {id: data.id, message: data.message, user: data.user.id};
+                let messageObject: Message = {id: data.id, message: data.message, user: data.user};
                 setMessages([...messages, messageObject]);
                 setNewMessage('');
             })
@@ -123,7 +127,6 @@ function Chat() {
     }
 
     const editMessage = (id: number, msg: string) => {
-        console.log('ok');
         setToModify(msg);
         setMsgId(id);
         setOpenEdit(true);
@@ -131,35 +134,37 @@ function Chat() {
     
 
     return (
-        <div>
+        <Box sx={{background: 'linear-gradient(#C9E2FB, #36699C)', minHeight: '100vh'}}>
             <Modify open={openEdit} message={toModify} messageId={msgId} />
-            <Stack spacing={2} sx={style}>
-                {messages.map((message, id) => {
-                    let sender = user ? JSON.parse(user).id : ''
-                    console.log('sender: ' + sender);
-                    console.log('user: ' +  message.user.id);
-                    // console.log(sender.id == message.user.id)
-                    return message.user.id == sender ? 
-                    (
-                        <Item key={id} sx={currentItemStyle}>
-                            {message.message}
-                            <Fab size="small" color="primary" aria-label="add" onClick={() => editMessage(message.id, message.message)}>
-                                <EditIcon  />
-                            </Fab>
-                        </Item>
-                        
-                    ) : (
-                        <Item key={id} sx={itemStyle}>{message.message}</Item>
-                    )
-                })}
-            </Stack>
+            <Box sx={{maxHeight: 600, overflowY: 'auto'}}>
+                <Stack spacing={2} sx={style}>
+                    {messages.map((message, id) => {
+                        let sender = user ? JSON.parse(user).id : ''
+                        return message.user.id == sender ? 
+                        (
+                            <Box component="section" sx={{alignSelf: 'flex-end', width: '45%'}}>
+                                <Item key={id} sx={currentItemStyle}>
+                                    {message.message}
+                                </Item>
+                                <Fab size="small" color="primary" aria-label="add" sx={{mt: 0.2}} onClick={() => editMessage(message.id, message.message)}>
+                                    <EditIcon  />
+                                </Fab>
+                            </Box>
+                            
+                            
+                        ) : (
+                            <Item key={id} sx={itemStyle}>{message.message}</Item>
+                        )
+                    })}
+                </Stack>
+            </Box>
             <FormControl sx={formStyle}>
-                <TextField value={newMessage} onChange={(event: ChangeEvent<HTMLInputElement>): void => {
+                <TextField value={newMessage} sx={inputStyle} onChange={(event: ChangeEvent<HTMLInputElement>): void => {
                     setNewMessage(event.target.value)}}
-                    label="Nouveau message" variant="outlined" />
-                <Button onClick={sendMessage} type="submit" variant='contained'>Envoyer</Button>
+                    label="Nouveau message" variant="filled" />
+                <Button onClick={sendMessage} type="submit" variant='contained' sx={{ml: 1, bgcolor: '#0C7DEF'}}>Envoyer</Button>
             </FormControl>
-        </div>
+        </Box>
     )
 }
 export default Chat

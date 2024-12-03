@@ -13,6 +13,7 @@ function Register() {
 
     const handleSubmit = (event: FormEvent): void => {
         event.preventDefault();
+        console.log(user)
 
         fetch('http://localhost:3000/user', {
             method: "POST",
@@ -24,7 +25,6 @@ function Register() {
         .then((response) => {
             if (!response.ok){
                 throw new Error('HTTP error! Status: ' + response.status);
-
             }
             return response.json();
         })
@@ -47,10 +47,11 @@ function Register() {
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: 400,
-        bgcolor: 'background.paper',
-        border: '2px solid #000',
+        bgcolor: '#D9D9D9',
         boxShadow: 24,
-        p: 4,
+        p: 5,
+        borderRadius: 5,
+        justifyContent: 'center'
     };
 
     return (
@@ -64,15 +65,17 @@ function Register() {
                 aria-describedby="modal-modal-description"
                 >
                 <Box sx={style}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
-                        Entrer votre pseudo
-                    </Typography>
+                    <Box sx={{display: 'flex', justifyContent: 'center'}}>
+                        <Typography id="modal-modal-title" variant="h6" component="h2" sx={{}}>
+                            Entrer votre pseudo
+                        </Typography>
+                    </Box>
                     <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                         <form onSubmit={handleSubmit}>
                             <TextField value={user} 
                                 onChange={(event: ChangeEvent<HTMLInputElement>): void => {setUser(event.target.value)}}
-                                label="Pseudo" variant="outlined" sx={{width: '80%'}} />
-                            <Button type="submit" variant='contained' sx={{width: '80%', mt: 2}}>submit</Button>
+                                label="Pseudo" variant="outlined" sx={{width: '100%'}} />
+                            <Button type="submit" variant='contained' sx={{width: '100%', mt: 2}}>submit</Button>
                         </form>
                     </Typography>
                 </Box>

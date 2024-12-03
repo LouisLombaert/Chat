@@ -24,10 +24,10 @@ function Modify(props: Props){
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: 400,
-        bgcolor: 'background.paper',
-        border: '2px solid #000',
+        bgcolor: '#D9D9D9',
         boxShadow: 24,
-        p: 4,
+        p: 5,
+        borderRadius: 5,
     }
 
     const handleSubmit = (event: FormEvent) => {
@@ -54,8 +54,6 @@ function Modify(props: Props){
             console.error('Error during fetch: ' + error);
             alert('Error while editing message');
         })
-        // setIsOpen(false);
-
     }
     return (
             <Modal
@@ -64,15 +62,17 @@ function Modify(props: Props){
                 aria-describedby="modal-modal-description"
                 >
                 <Box sx={style}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
-                        Modifier
-                    </Typography>
+                    <Box sx={{display: 'flex', justifyContent: 'center'}}>
+                        <Typography id="modal-modal-title" variant="h6" component="h2">
+                            Modifier
+                        </Typography>
+                    </Box>
                     <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                         <form onSubmit={handleSubmit}>
                             <TextField value={newMessage} 
                                 onChange={(event: ChangeEvent<HTMLInputElement>): void => {setNewMessage(event.target.value)}}
-                                label="Message" variant="outlined" sx={{width: '80%'}} />
-                            <Button type="submit" variant='contained' sx={{width: '80%', mt: 2}}>Modifier</Button>
+                                label="Message" variant="outlined" sx={{width: '100%'}} />
+                            <Button type="submit" variant='contained' sx={{width: '100%', mt: 2}}>Modifier</Button>
                         </form>
                     </Typography>
                 </Box>
