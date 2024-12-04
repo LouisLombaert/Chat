@@ -30,3 +30,6 @@ Du côté du Frontend, il faudra ajouter un boutton sur chaque message (hormis c
 de l'utilisateur actuellement connecté et l'id du message auquel le boutton sur lequel l'utilisateur a cliqué était associé.
 
 ### En tant qu'utilisateur, je peux voir le nombre de likes par message.
+Pour cette fonctionnalité, il faudra modifier notre API GET /message. Celle-ci devra maintenant renvoyer, en plus des données qu'elle renvoyait précédemment, le nombre de like pour chaque message. Pour cela, il suffit de compter le nombre d'entrée dans la table like dont la valeur de MessageID est égale à la valeur de l'id du message, et nous pourrons ainsi récuperer le nombre de like par message. 
+Du côté du frontend, il faut rajouter un champ en dessous de chaque message indiquant le nombre de likes. Lorsque l'utilsateur like une message, ce nombre doit augmenter sans devoir refaire appel à l'API. Cela peut être rendu possible grâce à la gestion des états de React (useState).
+
