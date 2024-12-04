@@ -7,7 +7,7 @@ Le développement du Backend s'est fait avec l'aide du Framework NestJS ainsi qu
 Le développement du Backend s'est fait avec l'aide de React et MaterialUi pour le design.
 
 ### Réalisation
-Le backend de l'application a été réalisé en premier. La première étape à été la création de la base de donnée, basée sur un schéma que j'ai réalisé:  [lien vers le schéma]().
+Le backend de l'application a été réalisé en premier. La première étape à été la création de la base de donnée, basée sur un schéma que j'ai réalisé:  [Lien vers le schéma](https://github.com/LouisLombaert/Chat/wiki/Base-de-donn%C3%A9es#sch%C3%A9ma-de-la-base-de-donn%C3%A9e).
 J'ai procédé d'abord à la création des entités (fournies par TypeORM) afin de créer les tables et leurs relation. Ensuite, j'ai poursuivi le développement du backend afin de créer les APIs nécessaires à l'application nécessaire pour que les fonctionalités souhaités soit réalisés. [Liste des APIs](https://github.com/LouisLombaert/Chat/wiki/API)
 
 L'étape suivante à été la réalisation du Frontend. 3 composants ont été créé: 
