@@ -4,12 +4,13 @@ import Stack from '@mui/material/Stack';
 import Item from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import { FormControl, Fab, Box } from '@mui/material';
+import { FormControl, Fab, Box, Modal, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import Modify from './Modify';
 
 export type User = {
     id: number,
+    username: string
 }
 
 export type Message = {
@@ -24,6 +25,9 @@ function Chat() {
     const [openEdit, setOpenEdit] = useState<boolean>(false);
     const [toModify, setToModify] = useState<string>('');
     const [msgId, setMsgId] = useState<number>(0);
+    const [openRegister, setOpenRegister] = useState<boolean>(true);
+    const [username, setUsername] = useState<string>('');
+    const [user, setUser] = useState<User|null>(null);
 
 
     const inputStyle = {
@@ -66,8 +70,20 @@ function Chat() {
         display: 'flex',
         flexDirection: 'row',
     }
+    const registerStyle = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: '#D9D9D9',
+        boxShadow: 24,
+        p: 5,
+        borderRadius: 5,
+        justifyContent: 'center'
+    };
 
-    let user: string|null = localStorage.getItem('currentUser');
+    //let user: string|null = localStorage.getItem('currentUser');
 
     useEffect(() => {
         fetch(`${process.env.REACT_APP_URL}/message`, {
@@ -93,9 +109,9 @@ function Chat() {
 
     const sendMessage = (event: FormEvent): void => {
         event.preventDefault();
-        user = localStorage.getItem('currentUser');
+        // user = localStorage.getItem('currentUser');
         if (user) {
-            let sender = JSON.parse(user);
+            //let sender = JSON.parse(user);
             if (newMessage == '') {
                 return;
             }
@@ -104,7 +120,7 @@ function Chat() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({message: newMessage, sender: sender?.id})
+                body: JSON.stringify({message: newMessage, sender: user?.id})
             })
             .then((response) => {
                 if (!response.ok) {
@@ -124,6 +140,37 @@ function Chat() {
         }
     }
 
+    const handleSubmitRegister = (event: FormEvent): void => {
+        event.preventDefault();
+        if (username == '') {
+            return;
+        }
+
+        fetch(`${process.env.REACT_APP_URL}/user`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                },
+            body: JSON.stringify({username: username}),
+        })
+        .then((response) => {
+            if (!response.ok){
+                throw new Error('HTTP error! Status: ' + response.status);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            //localStorage.setItem('currentUser', JSON.stringify(data));
+            setUser(data);
+            alert('Bienvenue, ' + data.username)
+            setOpenRegister(false);
+        })
+        .catch((error) => {
+            console.error('Error while fetching data: ', error);
+            alert('Error while creating user');
+        })
+    }
+
     const editMessage = (id: number, msg: string) => {
         setToModify(msg);
         setMsgId(id);
@@ -133,12 +180,33 @@ function Chat() {
 
     return (
         <Box sx={{background: 'linear-gradient(#C9E2FB, #36699C)', minHeight: '100vh'}}>
+            <Modal
+                open={openRegister}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+                >
+                <Box sx={registerStyle}>
+                    <Box sx={{display: 'flex', justifyContent: 'center'}}>
+                        <Typography id="modal-modal-title" variant="h6" component="h2" sx={{}}>
+                            Entrer votre pseudo
+                        </Typography>
+                    </Box>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                        <FormControl onSubmit={handleSubmitRegister} sx={{width: '100%'}}>
+                            <TextField value={username} 
+                                onChange={(event: ChangeEvent<HTMLInputElement>): void => {setUsername(event.target.value)}}
+                                label="Pseudo" variant="outlined" sx={{width: '100%'}} />
+                            <Button  onClick={handleSubmitRegister} type="submit" variant='contained' sx={{width: '100%', mt: 2}}>submit</Button>
+                        </FormControl>
+                    </Typography>
+                </Box>
+            </Modal>
             <Modify open={openEdit} message={toModify} messageId={msgId} />
             <Box sx={{maxHeight: 600, overflowY: 'auto'}}>
                 <Stack spacing={2} sx={style}>
                     {messages.map((message, id) => {
-                        let sender = user ? JSON.parse(user).id : ''
-                        return message.user.id == sender ? 
+                        //let sende
+                        return message.user.id == user?.id ? 
                         (
                             <Box component="section" sx={{alignSelf: 'flex-end', width: '45%'}}>
                                 <Item key={id} sx={currentItemStyle}>
