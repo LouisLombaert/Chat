@@ -16,6 +16,8 @@ L'étape suivante à été la réalisation du Frontend. 3 composants ont été c
  - Le composant **Register**, contenant un Modal qui permet à l'utilisateur de rentrer son pseudo
  - Le composant **Modify**, contenant un Modal qui permet à l'utilisateur d'éditer un des messages qu'il a envoyé
 
+Par la suite, les modals **Register** et **Modify** ont été inclus dans le composant Chat, car la séparation des trois provoquait des défauts: pour **Register**, l'utilisateur devait rafraichir la page afin que les messages s'affichent correctement (les messages envoyés par l'utilisateur courant s'affichent différemment) et pour **Modify**, il devait également rafraichir la page afin que le nouveau contenu du message modifié soit affiché.
+
 ## Démarrer l'application
  - Frontend
 ```
@@ -64,6 +66,5 @@ L'envoi de notification peut être rendu possible par l'utilisation de l'API Not
 
 ## Source
 
-https://forum.huawei.com/enterprise/fr/Authentification-par-jeton-JWT-et-authentification-par-cookie/thread/729629562100400128-667480999820406784
-https://developer.mozilla.org/fr/docs/Web/API/Notifications_API/Using_the_Notifications_API
-https://docs.nestjs.com/first-steps
+(28/11/2023). *Authentification par jeton (JWT) et authentification par cookie*.  forum.huawei.com. https://forum.huawei.com/enterprise/fr/Authentification-par-jeton-JWT-et-authentification-par-cookie/thread/729629562100400128-667480999820406784
+*Utiliser l'API Notifications*. developer.mozilla.org. https://developer.mozilla.org/fr/docs/Web/API/Notifications_API/Using_the_Notifications_API
