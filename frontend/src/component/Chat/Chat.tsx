@@ -6,7 +6,6 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { FormControl, Fab, Box, Modal, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import Modify from './Modify';
 
 export type User = {
     id: number,
@@ -82,8 +81,18 @@ function Chat() {
         borderRadius: 5,
         justifyContent: 'center'
     };
+    const modifyStyle = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: '#D9D9D9',
+        boxShadow: 24,
+        p: 5,
+        borderRadius: 5,
+    }
 
-    //let user: string|null = localStorage.getItem('currentUser');
 
     useEffect(() => {
         fetch(`${process.env.REACT_APP_URL}/message`, {
@@ -103,15 +112,13 @@ function Chat() {
         })
         .catch((error) => {
             console.error('error while fetching data: ' + error);
-            alert('Error while fetching data');
+            // alert('Error while fetching dataaaaAAA');
         })
-    }, []);
+    }, [messages]);
 
     const sendMessage = (event: FormEvent): void => {
         event.preventDefault();
-        // user = localStorage.getItem('currentUser');
         if (user) {
-            //let sender = JSON.parse(user);
             if (newMessage == '') {
                 return;
             }
@@ -160,7 +167,6 @@ function Chat() {
             return response.json();
         })
         .then((data) => {
-            //localStorage.setItem('currentUser', JSON.stringify(data));
             setUser(data);
             alert('Bienvenue, ' + data.username)
             setOpenRegister(false);
@@ -175,6 +181,34 @@ function Chat() {
         setToModify(msg);
         setMsgId(id);
         setOpenEdit(true);
+    }
+
+    const handleSubmitModify = (event: FormEvent) => {
+        event.preventDefault();
+        if (toModify == '') {
+            return;
+        }
+        fetch(`${process.env.REACT_APP_URL}/message`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                },
+            body: JSON.stringify({messageId: msgId, newMessage: toModify}),
+        })
+        .then((response) => {
+            if (!response.ok){
+                throw new Error('HTTP error! Status: ' + response.status);
+            }
+            return response;
+        })
+        .then((data) => {
+            console.log(data);
+            setOpenEdit(false);
+        })
+        .catch((error) => {
+            console.error('Error during fetch: ' + error);
+            alert('Error while editing message');
+        })
     }
     
 
@@ -201,7 +235,27 @@ function Chat() {
                     </Typography>
                 </Box>
             </Modal>
-            <Modify open={openEdit} message={toModify} messageId={msgId} />
+            <Modal
+                open={openEdit}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+                >
+                <Box sx={modifyStyle}>
+                    <Box sx={{display: 'flex', justifyContent: 'center'}}>
+                        <Typography id="modal-modal-title" variant="h6" component="h2">
+                            Modifier
+                        </Typography>
+                    </Box>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                        <FormControl sx={{width: '100%'}}>
+                            <TextField value={toModify} 
+                                onChange={(event: ChangeEvent<HTMLInputElement>): void => {setToModify(event.target.value)}}
+                                label="Message" variant="outlined" sx={{width: '100%'}} />
+                            <Button onClick={handleSubmitModify} type="submit" variant='contained' sx={{width: '100%', mt: 2}}>Modifier</Button>
+                        </FormControl>
+                    </Typography>
+                </Box>
+            </Modal>
             <Box sx={{maxHeight: 600, overflowY: 'auto'}}>
                 <Stack spacing={2} sx={style}>
                     {messages.map((message, id) => {
