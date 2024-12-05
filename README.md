@@ -67,4 +67,5 @@ L'envoi de notification peut être rendu possible par l'utilisation de l'API Not
 ## Source
 
 (28/11/2023). *Authentification par jeton (JWT) et authentification par cookie*.  forum.huawei.com. https://forum.huawei.com/enterprise/fr/Authentification-par-jeton-JWT-et-authentification-par-cookie/thread/729629562100400128-667480999820406784
+
 *Utiliser l'API Notifications*. developer.mozilla.org. https://developer.mozilla.org/fr/docs/Web/API/Notifications_API/Using_the_Notifications_API
