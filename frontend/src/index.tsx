@@ -1,8 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
-import Register from './component/Register/Register';
 import reportWebVitals from './reportWebVitals';
 import Chat from './component/Chat/Chat';
 
@@ -11,8 +9,6 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    {/* <App /> */}
-    {/* <Register /> */}
     <Chat />
   </React.StrictMode>
 );
